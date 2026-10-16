@@ -244,6 +244,19 @@ function createBuiltInEngine(): SupportEngine {
  * Chosen once. A key that appears later needs a restart, which on Vercel is what
  * setting the variable does anyway.
  */
-export const supportEngine: SupportEngine = env.SUPPORT_LLM_API_KEY
-  ? createGroqEngine(env.SUPPORT_LLM_API_KEY)
-  : createBuiltInEngine()
+let engineInstance: SupportEngine | undefined
+
+function getEngine(): SupportEngine {
+  if (!engineInstance) {
+    engineInstance = env.SUPPORT_LLM_API_KEY
+      ? createGroqEngine(env.SUPPORT_LLM_API_KEY)
+      : createBuiltInEngine()
+  }
+  return engineInstance
+}
+
+export const supportEngine: SupportEngine = {
+  chat(history, systemPrompt) {
+    return getEngine().chat(history, systemPrompt)
+  },
+}

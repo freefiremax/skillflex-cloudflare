@@ -17,7 +17,7 @@ function getDirname(): string {
 }
 
 const here = getDirname()
-export const storageRoot = path.resolve(here, '../../', env.STORAGE_DIR || 'storage')
+export const storageRoot = path.resolve(here, '../../', process.env.STORAGE_DIR || 'storage')
 
 export interface UploadTicket {
   /** Where the browser should PUT/POST the bytes. */
@@ -186,15 +186,14 @@ function storageFailure(httpStatus: number, detail: string): StorageError {
 class SupabaseMediaProvider implements MediaProvider {
   readonly name = 'supabase'
 
-  private readonly base: string
-  private readonly bucket: string
-  private readonly key: string
-
-  constructor() {
-    // env.ts already guarantees these are present when MEDIA_PROVIDER=supabase.
-    this.base = `${env.SUPABASE_URL!.replace(/\/+$/, '')}/storage/v1`
-    this.bucket = env.SUPABASE_STORAGE_BUCKET
-    this.key = env.SUPABASE_SERVICE_ROLE_KEY!
+  private get base(): string {
+    return `${(env.SUPABASE_URL || '').replace(/\/+$/, '')}/storage/v1`
+  }
+  private get bucket(): string {
+    return env.SUPABASE_STORAGE_BUCKET || 'submissions'
+  }
+  private get key(): string {
+    return env.SUPABASE_SERVICE_ROLE_KEY || ''
   }
 
   private async call<T>(method: string, urlPath: string, body?: unknown): Promise<T> {
@@ -352,4 +351,19 @@ function build(): MediaProvider {
   }
 }
 
-export const mediaProvider = build()
+let instance: MediaProvider | undefined
+
+function getMediaProvider(): MediaProvider {
+  if (!instance) {
+    instance = build()
+  }
+  return instance
+}
+
+export const mediaProvider: MediaProvider = new Proxy({} as MediaProvider, {
+  get(_target, prop: string | symbol) {
+    const p = getMediaProvider()
+    const val = (p as any)[prop]
+    return typeof val === 'function' ? val.bind(p) : val
+  },
+})

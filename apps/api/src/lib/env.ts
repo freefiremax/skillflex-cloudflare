@@ -184,10 +184,25 @@ export function loadEnv(extra?: Record<string, unknown>): z.infer<typeof envSche
 
 export const env: z.infer<typeof envSchema> = new Proxy({} as z.infer<typeof envSchema>, {
   get(_target, prop: string) {
-    if (!cachedEnv) {
-      loadEnv()
+    if (cachedEnv) {
+      return (cachedEnv as any)[prop]
     }
-    return (cachedEnv as any)[prop]
+    try {
+      loadEnv()
+      return (cachedEnv as any)[prop]
+    } catch {
+      // In Cloudflare Workers or serverless build checks, secrets like DATABASE_URL or
+      // JWT_SECRET are injected per-request via loadEnv(cfEnv), not during script import.
+      // During import/build evaluation, return process.env value or schema default value if available.
+      if (prop in process.env) {
+        return process.env[prop]
+      }
+      const shape = envSchema.shape as Record<string, any>
+      if (shape[prop] && typeof shape[prop]._def?.defaultValue === 'function') {
+        return shape[prop]._def.defaultValue()
+      }
+      return undefined
+    }
   },
 })
 
