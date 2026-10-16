@@ -15,21 +15,30 @@ import { z } from 'zod'
  * complain about a path that isn't there.
  */
 function findEnvFile(): string | undefined {
-  let dir = path.dirname(fileURLToPath(import.meta.url))
-  for (let i = 0; i < 8; i += 1) {
-    const candidate = path.join(dir, '.env')
-    if (existsSync(candidate)) return candidate
-    const parent = path.dirname(dir)
-    if (parent === dir) break
-    dir = parent
+  try {
+    if (typeof import.meta.url !== 'string' || !import.meta.url) return undefined
+    let dir = path.dirname(fileURLToPath(import.meta.url))
+    for (let i = 0; i < 8; i += 1) {
+      const candidate = path.join(dir, '.env')
+      if (existsSync(candidate)) return candidate
+      const parent = path.dirname(dir)
+      if (parent === dir) break
+      dir = parent
+    }
+  } catch {
+    return undefined
   }
   return undefined
 }
 
 // On Vercel or Cloudflare the platform injects env vars directly and there is no .env to find.
 if (!process.env.VERCEL && !process.env.CLOUDFLARE && !process.env.CF_PAGES && !process.env.WORKER) {
-  const envFile = findEnvFile()
-  if (envFile) dotenv.config({ path: envFile })
+  try {
+    const envFile = findEnvFile()
+    if (envFile) dotenv.config({ path: envFile })
+  } catch {
+    // Ignore in serverless/workers environments without filesystem access
+  }
 }
 
 const envSchema = z.object({

@@ -12,6 +12,7 @@ not_found_handling = "single-page-application"
 crons = ["0 3 * * *"]
 
 [vars]
+CLOUDFLARE = "true"
 NODE_ENV = "production"
 MEDIA_PROVIDER = "supabase"
 SUPABASE_STORAGE_BUCKET = "submissions"

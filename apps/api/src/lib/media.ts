@@ -7,8 +7,17 @@ import type { Readable } from 'node:stream'
 import { HttpError } from './auth.js'
 import { env } from './env.js'
 
-const here = path.dirname(fileURLToPath(import.meta.url))
-export const storageRoot = path.resolve(here, '../../', env.STORAGE_DIR)
+function getDirname(): string {
+  try {
+    if (typeof import.meta.url === 'string' && import.meta.url) {
+      return path.dirname(fileURLToPath(import.meta.url))
+    }
+  } catch {}
+  return process.cwd?.() ?? ''
+}
+
+const here = getDirname()
+export const storageRoot = path.resolve(here, '../../', env.STORAGE_DIR || 'storage')
 
 export interface UploadTicket {
   /** Where the browser should PUT/POST the bytes. */
