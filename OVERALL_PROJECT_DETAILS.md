@@ -467,7 +467,7 @@ AWS_SECRET_ACCESS_KEY=""
 ### 12.2. Installation & Database Setup
 ```bash
 # 1. Clone repository
-git clone https://github.com/freefiremax/skillflex.git
+git clone https://github.com/freefiremax/skillflex-cloudflare.git
 cd skillflex
 
 # 2. Install monorepo dependencies

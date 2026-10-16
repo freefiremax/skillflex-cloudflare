@@ -1,1 +1,1 @@
-/*    /index.html   200
+# SPA routing fallback is handled natively via wrangler.toml [assets] not_found_handling = "single-page-application"

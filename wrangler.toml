@@ -1,4 +1,4 @@
-name = "skillflex"
+name = "skillflex-cloudflare"
 main = "apps/api/src/cloudflare.ts"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]

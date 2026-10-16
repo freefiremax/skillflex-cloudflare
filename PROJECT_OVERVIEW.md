@@ -20,7 +20,7 @@ The distinction matters:
 - **Planned** means it is modelled, described, or intended but does not yet have the complete user-facing flow.
 - **Business assumptions** are commercial or market statements from the master brief, not facts established by the source code.
 
-The configured Git remote is https://github.com/freefiremax/skillflex.git. The current main branch was fetched and compared with this working branch while preparing this guide. Its later merge commits restore the current UI tree, so they introduce no documentation-relevant source difference.
+The configured Git remote is https://github.com/freefiremax/skillflex-cloudflare.git. The current main branch was fetched and compared with this working branch while preparing this guide. Its later merge commits restore the current UI tree, so they introduce no documentation-relevant source difference.
 
 The current prototype deployment is [skillflex-avcoe.vercel.app](https://skillflex-avcoe.vercel.app). Its public sign-in screen was successfully reached on 13 September 2026; this confirms availability of the landing/authentication screen, not end-to-end operation against a production database.
 

@@ -8,7 +8,7 @@ This project has been migrated from Vercel to **Cloudflare Workers & Pages** (Cl
 
 - **Frontend (SPA)**: React 18 + Vite 6 built to `apps/web/dist`.
   - Hosted globally on Cloudflare edge CDN.
-  - SPA client routing handled via [`apps/web/public/_redirects`](file:///apps/web/public/_redirects) (`/* /index.html 200`) and Wrangler assets SPA configuration.
+  - SPA client routing handled natively via Wrangler assets SPA configuration (`not_found_handling = "single-page-application"` in `wrangler.toml`).
 - **Backend (API)**: Fastify 5 + Prisma 6 running in Cloudflare Workers via [`apps/api/src/cloudflare.ts`](file:///apps/api/src/cloudflare.ts).
   - Uses Cloudflare `nodejs_compat` runtime.
   - Prisma connects to Postgres (Supabase) via `@prisma/adapter-pg` over Cloudflare TCP sockets (`cloudflare:sockets`).
